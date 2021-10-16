@@ -84,9 +84,16 @@ if __name__ == '__main__':
         else:
             print(bit_length, "bit prime is: \n", pc)
             print("input 1 to print all primes ")
+            print("input 2 to save number")
             option = int(input())
 
-            if option == 1:
+            if option == 1: # print all primes
                 eratosthenes_sieve(pc)
+
+            if option == 2: #  save number to a file, menu needs a rework so you can choose option 1, then 2
+                print(("file name"))
+                fname = input()
+                f = open(fname+".txt", "w")
+
             else:
                 break
