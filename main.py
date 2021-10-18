@@ -1,8 +1,28 @@
 import random
 from time import perf_counter
-import glob
 import os
 import re
+
+'''
+TODO:
+
+Další Generace Primes
+Další Test privočíselnosti
+Lepší proměnné
+Změna jmen funkcí
+Logging při generace - errory 
+Log výpis síta 
+časovače
+MultiThreading
+
+Try Except: -- general Error handling
+Docstringy
+
+Projet Blackem
+
+Pokud bude čas udělat Fancy menu
+
+'''
 
 
 def rand_n(bit_length):
@@ -37,10 +57,10 @@ def p_candidate(bit_length):
     ref_generation = perf_counter()  # reference point for generation of the prime number candidate itself
     # a^n-1 = 1(mod n)
     k = 2
-    #  use fermats test to test the generated candidate, probably redundant and can be removed
+    #  use fermat test to test the generated candidate, probably redundant and can be removed
 
     while True:
-        # apply small fermats theorem
+        # apply small fermat theorem
         pc = rand_n(bit_length)
         for i in range(k):
             a = random.randint(1, pc - 1)
@@ -114,7 +134,7 @@ if __name__ == '__main__':
         # loading from a file and testing
         elif option == 4:
             file_list = os.listdir()  # list all files in the project directory
-            r = re.compile("[\w]+\.txt")  # filter out anything thats not .txt
+            r = re.compile(f"[\w]+\.txt")  # filter out anything thats not .txt
             filtered_list = list(filter(r.match, file_list))
             print(filtered_list)  # print .txt files in directory
             print("input file name")
@@ -138,28 +158,3 @@ if __name__ == '__main__':
             continue
         else:
             break
-
-        '''
-        print("enter bit length")
-        bit_length = int(input())
-
-        pc = p_candidate(bit_length)
-        if miller_rabin(pc) is False:
-            continue
-        else:
-            print(bit_length, "bit prime is: \n", pc)
-            print("input 1 to print all primes ")
-            print("input 2 to save number")
-            option = int(input())
-
-            if option == 1: # print all primes
-                eratosthenes_sieve(pc)
-
-            if option == 2: #  save number to a file, menu needs a rework so you can choose option 1, then 2
-                print(("file name"))
-                fname = input()
-                f = open(fname+".txt", "w")
-
-            else:
-                break
-'''
