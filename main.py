@@ -7,7 +7,7 @@ import re
 TODO:
 
 Další Generace Primes
-Další Test privočíselnosti
+Další Test privočíselnosti(done, potřebuje ale lepší zapasování do programu)
 Lepší proměnné (¬done)
 Změna jmen funkcí (¬done)
 importy (done
@@ -42,7 +42,7 @@ def miller_rabin(prime_candidate):
     for i in range(k):
         prime_base = random.randint(2, prime_candidate - 1)  # choose a random "base" for the calculation
 
-        x = pow(prime_base , s, prime_candidate)  # a ** s % prime_candidate
+        x = pow(prime_base, s, prime_candidate)  # a ** s % prime_candidate
         if x == 1 or x == prime_candidate - 1:
             continue
         for j in range(r - 1):
@@ -53,7 +53,21 @@ def miller_rabin(prime_candidate):
             print("Testování trvalo %.4f sekund" % (perf_counter() - ref_testing))
             return False
     print("Testování trvalo %.4f sekund" % (perf_counter() - ref_testing))
+
     return True
+
+
+def lucas_lehmer(prime_candidate):
+    if prime_candidate == 2:
+        return True
+    s = 4
+    M = pow(2, prime_candidate) - 1
+    for x in range(1, (prime_candidate - 2) + 1):
+        s = ((s * s) - 2) % M
+    if s == 0:
+        return True
+    else:
+        return False
 
 
 def generate_prime(bit_length):
@@ -77,7 +91,7 @@ def generate_prime(bit_length):
 def eratosthenes_sieve(prime_candidate):
     # first we "presume" all values until the given number are prime
     # prime_candidate = 30 testing value
-    primelist = [True for i in range(prime_candidate + 1)]
+    primelist = [True for prime_candidate in range(prime_candidate + 1)]
 
     tested_number = 2  # start with 2
 
@@ -154,7 +168,11 @@ if __name__ == '__main__':
         elif option == 5:  # needs another way to test prime numbers ( Lucas Lehmer ?)
             print("input tested number")
             prime_candidate = int(input())
+
             if miller_rabin(prime_candidate) is True:
+                if lucas_lehmer(prime_candidate) is True:
+                    print("The given number is a mersennes prime")
+                    break
                 print("is prime")
             else:
                 print("is composite")
