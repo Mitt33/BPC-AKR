@@ -1,4 +1,5 @@
 import random
+import settings
 from time import perf_counter
 
 
@@ -20,10 +21,11 @@ def miller_rabin(prime_candidate):
             if x == prime_candidate - 1:
                 break  # prime
         else:
-            print("Testování trvalo %.4f sekund" % (perf_counter() - ref_testing))
+            print("Testing composite number took:  %.4f seconds" % (perf_counter() - ref_testing))
             return False
-    print("Testování trvalo %.4f sekund" % (perf_counter() - ref_testing))
+    print("Testing prime number took %.4f seconds" % (perf_counter() - ref_testing))
     return True
+
 
 def lucas_lehmer(prime_candidate):
     if prime_candidate == 2:
@@ -37,7 +39,9 @@ def lucas_lehmer(prime_candidate):
     else:
         return False
 
-def eratosthenes_sieve(prime_candidate):
+
+def eratosthenes_sieve():
+    prime_candidate = int(settings.prime)
     # first we "presume" all values until the given number are prime
     # prime_candidate = 30 testing value
     primelist = [True for prime_candidate in range(prime_candidate + 1)]
@@ -56,3 +60,8 @@ def eratosthenes_sieve(prime_candidate):
     for tested_number in range(prime_candidate + 1):
         if primelist[tested_number]:
             print(tested_number)
+
+
+def testnumber():
+    number = int(input('Input number to be tested: '))
+    miller_rabin(number)

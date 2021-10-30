@@ -1,12 +1,15 @@
+from file_operations import savetofile, loadtotest
+from tests import testnumber, eratosthenes_sieve
 from number_generators import generate_prime
+import settings
 
 menu = {
     1: 'Generate Prime Number',
     2: 'Print All Prime Numbers',
     3: 'Save Number To File',
-    4: 'Load Number From File',
-    5: 'Load Number From File To Test',
-    6: 'W I P'
+    4: 'Load Number From File To Test',
+    5: 'Test a number',
+    6: 'End program'
 }
 
 
@@ -20,26 +23,26 @@ def option1():
 
 
 def option2():
-    print('Option 2')
+    eratosthenes_sieve()
 
 
 def option3():
-    print('Option 3')
+    savetofile()
 
 
 def option4():
-    print('Option 4')
+    loadtotest()
 
 
 def option5():
-    print('Option 5')
+    testnumber()
 
 
 def option6():
-    print('Option 6')
-
+    quit()
 
 if __name__ == '__main__':
+    settings.init()
     while True:
         print_menu()
         option = ''
