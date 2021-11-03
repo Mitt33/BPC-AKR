@@ -1,181 +1,158 @@
-import random
-from time import perf_counter
-from os import listdir
-import re
-
-'''
-TODO:
-
-Další Generace Primes
-Další Test privočíselnosti(done, potřebuje ale lepší zapasování do programu)
-Lepší proměnné (¬done)
-Změna jmen funkcí (¬done)
-importy (done
-Logging při generace - errory 
-Log výpis síta 
-časovače (¬done)
-MultiThreading
-nahradit elify v menu matchem https://stackoverflow.com/questions/60208/replacements-for-switch-statement-in-python
-
-Try Except: -- general Error handling
-Docstringy
-
-Projet Blackem
-
-Pokud bude čas udělat Fancy menu
-
-'''
+from hashlib import sha256
+import time
+import json
 
 
-def generate_nbit_number(bit_length):
-    return random.randrange(2 ** (bit_length - 1) + 1, 2 ** bit_length - 1)
+def is_chain_valid():
+    for block in blockchain:
 
-
-def miller_rabin(prime_candidate):
-    ref_testing = perf_counter()  # time reference for the testing of primality
-    # use the  2^s*r+1 formula
-    r, s = 0, prime_candidate - 1
-    k = 10  # Number of rounds to test the number, increase gives a higher success chance, decrease speeds up the script
-    while s % 2 == 0:
-        r += 1
-        s //= 2
-    for i in range(k):
-        prime_base = random.randint(2, prime_candidate - 1)  # choose a random "base" for the calculation
-
-        x = pow(prime_base, s, prime_candidate)  # a ** s % prime_candidate
-        if x == 1 or x == prime_candidate - 1:
-            continue
-        for j in range(r - 1):
-            x = pow(x, 2, prime_candidate)
-            if x == prime_candidate - 1:
-                break  # prime
-        else:
-            print("Testování trvalo %.4f sekund" % (perf_counter() - ref_testing))
+        if block.hash != block.hash_func:
+            print("not match")
             return False
-    print("Testování trvalo %.4f sekund" % (perf_counter() - ref_testing))
+        else:
+            print("match")
+            return True
 
-    return True
+
+class Wallet:
+    def __init__(self, name):
+        self.name: str = name
+        self.UTXOs: list = []
+
+    def send_funds(self, recipient, value: float):
+        blockchain.append(
+            Block(Transaction(self, recipient, value), "0" if len(blockchain) == 0 else blockchain[-1].hash))
+
+    @property
+    def total(self) -> float:
+        total: float = 0
+        for i in range(len(self.UTXOs)):
+            total += self.UTXOs[i].value
+
+        return total
 
 
-def lucas_lehmer(prime_candidate):
-    if prime_candidate == 2:
+class Transaction:
+    outputs: list = []
+
+    def __init__(self, sender, recipient, value: float):
+        self.sender = sender
+        self.recipient = recipient
+        self.value = value
+        self.inputs = sender.UTXOs
+        self.id = self.calculate_hash
+
+        self.process_transaction()
+
+    def calculate_hash(self):
+        return str(sha256((self.sender + self.recipient + self.value).encode('utf-8')).hexdigest())
+
+    def process_transaction(self) -> bool:
+        if self.value > self.sender.total:
+            return False
+
+        total: float = 0
+        while True:
+            total += self.inputs.pop().value
+
+            if total >= self.value:
+                break
+
+        leftover: float = total - self.value
+
+        self.sender.UTXOs.append(TransactionOutput(self.sender, leftover, str(self.id)))
+        self.recipient.UTXOs.append(TransactionOutput(self.recipient, self.value, str(self.id)))
+
         return True
-    s = 4
-    M = pow(2, prime_candidate) - 1
-    for x in range(1, (prime_candidate - 2) + 1):
-        s = ((s * s) - 2) % M
-    if s == 0:
-        return True
-    else:
-        return False
 
 
-def generate_prime(bit_length):
-    ref_generation = perf_counter()  # reference point for generation of the prime number candidate itself
-    # a^n-1 = 1(mod n)
-    k = 2
-    #  use fermat test to test the generated candidate, probably redundant and can be removed
+class TransactionOutput:
+    def __init__(self, sender: Wallet, value: float, parentTransactionId: str):
+        self.sender = sender
+        self.value = value
+        self.parentTransactionId = parentTransactionId
+        self.id = self.calculate_hash
 
-    while True:
-        # apply small fermat theorem
-        pc = generate_nbit_number(bit_length)
-        for i in range(k):
-            a = random.randint(1, pc - 1)
-            if pow(a, pc - 1, pc) != 1:
-                continue  # not prime
+    @property
+    def calculate_hash(self):
+        return str(
+            sha256((self.sender.name + str(self.value) + str(self.parentTransactionId)).encode('utf-8')).hexdigest())
+
+
+class TransactionInput:
+    UTXO: TransactionOutput = None
+
+    def __init__(self, transactionOutputId: str, ):
+        self.transactionOutputId = transactionOutputId
+
+
+class Block:
+
+    @property
+    def hash_func(self):
+        return str(
+            sha256((str(self.transaction.value) + self.previousHash + self.timestamp).encode('utf-8')).hexdigest())
+
+    def hash_func_nonce(self, nonce):
+        return str(sha256((str(self.transaction.value) + self.previousHash + self.timestamp + str(nonce)).encode(
+            'utf-8')).hexdigest())
+
+    def __init__(self, transaction, previousHash):
+        self.previousHash: str = previousHash
+        self.transaction: Transaction = transaction
+        self.timestamp: str = time.asctime()
+        self.hash: str = self.mine_block()
+
+    def mine_block(self):
+        difficulty = 4
+        nonce = 0
+        num_of_zeros = difficulty * "0"
+
+        while True:
+            hash_with_nonce = self.hash_func_nonce(nonce)
+
+            if not hash_with_nonce.startswith(num_of_zeros):
+                nonce += 1
             else:
-                print("Generace prvočísla zabrala %.4f sekund" % (perf_counter() - ref_generation))
-                return pc
+                print(hash_with_nonce)
 
+                return hash_with_nonce
 
-def eratosthenes_sieve(prime_candidate):
-    # first we "presume" all values until the given number are prime
-    # prime_candidate = 30 testing value
-    primelist = [True for prime_candidate in range(prime_candidate + 1)]
-
-    tested_number = 2  # start with 2
-
-    while tested_number * tested_number <= prime_candidate:
-        # If list is not changed, then it is a prime
-        if primelist[tested_number] is True:
-            #  mark all multiples of prime_candidate as not prime
-            for i in range(tested_number ** 2, prime_candidate + 1, tested_number):
-                primelist[i] = False
-
-        tested_number += 1
-    #  manually remove 0, 1
-    primelist[0] = False
-    primelist[1] = False
-
-    #  print out whatever remained marked as True
-    for tested_number in range(prime_candidate + 1):
-        if primelist[tested_number]:
-            print(tested_number)
+    def changeBlock(self):
+        self.transaction = "new transaction."
+        return self
 
 
 if __name__ == '__main__':
-    menu = True
+    change = False
 
-    while menu:
-        print("1__Generate prime number")
-        print("2__Print all prime numbers")
-        print("3__Save number")
-        print("4__Load a number to test")
-        print("5__Test a number")
-        option = int(input())
+    blockchain = []
 
-        if option == 1:
-            print("enter bit length")
-            bit_length = int(input())
-            while True:
+    walletA = Wallet("alice")
+    walletB = Wallet("bob")
 
-                prime_candidate = generate_prime(bit_length)
-                if miller_rabin(prime_candidate) is False:
-                    continue
-                else:
-                    print(bit_length, "bit prime is: \n", prime_candidate)
-                    break
+    walletA.UTXOs.append(TransactionOutput(walletA, 1000, "Gift from God"))
 
-        # print all primes until the given number
-        elif option == 2:
-            eratosthenes_sieve(prime_candidate)
-            continue
+    print(f'Současná bilance: {walletA.total}')
+    print(f'Současná bilance: {walletB.total}')
 
-        # save number into a .txt file
-        elif option == 3:
-            print("input file name")
-            fname = str(input())  # choose a name
-            f = open(fname + ".txt", "w")
-            f.write(str(prime_candidate))  # write the generated prime into the file
-            f.close()  # close the file
-        # loading from a file and testing
-        elif option == 4:
-            file_list = listdir()  # list all files in the project directory
-            r = re.compile(f"[\w]+\.txt")  # filter out anything thats not .txt
-            filtered_list = list(filter(r.match, file_list))
-            print(filtered_list)  # print .txt files in directory
-            print("input file name")
-            choose_file = str(input())
-            f = open(choose_file + ".txt", "r")
-            prime_candidate = int(f.read())  # save the number as a prime candidate to test
+    walletA.send_funds(walletB, 10)
 
-            if miller_rabin(prime_candidate) is True:
-                print("The given number is prime")
-            else:
-                print("the number is composite")
-            continue
-        # number testing
-        elif option == 5:  # needs another way to test prime numbers ( Lucas Lehmer ?)
-            print("input tested number")
-            prime_candidate = int(input())
+    print(f'Současná bilance: {walletA.total}')
+    print(f'Současná bilance: {walletB.total}')
 
-            if miller_rabin(prime_candidate) is True:
-                if lucas_lehmer(prime_candidate) is True:
-                    print("The given number is a mersennes prime")
-                    break
-                print("is prime")
-            else:
-                print("is composite")
-            continue
-        else:
-            break
+    """blockchain.append(Block("blok jedna", "0"))
+    print("vytezen 1")
+    if change:
+        blockchain.append(Block("blok dva.", blockchain[0].hash).changeBlock())
+        is_chain_valid()
+    else:
+        blockchain.append(Block("blok dva.", blockchain[0].hash))
+    print("vytezen 2")
+    blockchain.append(Block("blok 3", blockchain[1].hash))
+    print("vytezen 3")
+"""
+    for block in blockchain:
+        with open("data.json", "w") as outfile:
+            json.dump([block.__dict__ for block in blockchain], fp=outfile, default=lambda o: "object-non-serializable",
+                      indent=4)
