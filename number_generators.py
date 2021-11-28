@@ -12,12 +12,12 @@ def generate_prime():
     bit_length = int(input('Bit Length: '))
     tested_numbers = 0
     ref_generation = perf_counter()
-
+    lm = False
     isprime = False
     while not isprime:
         prime_candidate = generate_nbit_number(bit_length)
         tested_numbers += 1
-        if miller_rabin(prime_candidate) is True:
+        if miller_rabin(prime_candidate, lm) is True:
             isprime = True
             settings.prime = prime_candidate
     print(f"Bylo otestováno {tested_numbers} čísel\nVygenerováno bylo prvočíslo {prime_candidate}")

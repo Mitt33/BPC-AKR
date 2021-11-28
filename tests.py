@@ -83,7 +83,8 @@ def eratosthenes_sieve():
 
 def testnumber():
     number = int(input('Input number to be tested: '))
-    if miller_rabin(number) is True:
+    lm = False
+    if miller_rabin(number,lm) is True:
         print("is prime")
     else:
         print("not prime")
