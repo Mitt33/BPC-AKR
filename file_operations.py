@@ -16,6 +16,7 @@ def savetofile():
 
 
 def loadtotest():
+    lm = False
     file_list = listdir()
     r = re.compile(f"[\w]+\.txt")
     filtered_list = list(filter(r.match, file_list))
@@ -23,5 +24,8 @@ def loadtotest():
     choose_file = str(input('input a filename: '))
     f = open(choose_file + ".txt", "r")
     numbertotest = int(f.read())
-    miller_rabin(numbertotest)
+    if miller_rabin(numbertotest, lm):
+        print("The number is prime")
+    else:
+        print("The number is composite")
     load_to_test_logger.info("number: {a} loaded, from file: {b}".format(a=numbertotest, b=choose_file))

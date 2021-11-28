@@ -1,6 +1,6 @@
 import random
 import settings
-import math
+
 from time import perf_counter
 from setup_logs import setup_logger
 
@@ -60,7 +60,10 @@ def eratosthenes_sieve():
     primelist[0] = False
     primelist[1] = False
     #  print out whatever remained marked as True
-    return primelist
+    for tested_number in range(prime_candidate + 1):
+        if primelist[tested_number]:
+            print(tested_number)
+
 
 
 """def sieveOfAtkin():
