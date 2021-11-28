@@ -27,8 +27,8 @@ def generate_prime():
     print(f"Bylo otestováno {tested_numbers} čísel\nVygenerováno bylo prvočíslo {prime_candidate}")
     print("Generace prvočísla trvala: %.4f sekund" % (perf_counter() - ref_generation))
     generated_prime_logger.info(
-        'time: {a}, bit-lenght: {b}, number_generated: {c}'.format(a=(perf_counter() - ref_generation), b=bit_length,
-                                                                   c=prime_candidate))
+        'time: {a}, bit_lenght: {b}, tested_numbers: {c}, number_generated: {d}'.format(a=(perf_counter() - ref_generation), b=bit_length,
+                                                                   c=tested_numbers, d=prime_candidate))
 
 
 def generate_meresennes():

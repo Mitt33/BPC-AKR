@@ -44,6 +44,7 @@ def lucas_lehmer(p):
 
 
 def eratosthenes_sieve():
+    print("numbers are generating...this can take a while")
     prime_candidate = int(settings.prime)
     # first we "presume" all values until the given number are prime
     # prime_candidate = 30 testing value
