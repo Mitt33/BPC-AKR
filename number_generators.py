@@ -22,3 +22,10 @@ def generate_prime():
             settings.prime = prime_candidate
     print(f"Bylo otestováno {tested_numbers} čísel\nVygenerováno bylo prvočíslo {prime_candidate}")
     print("Generace prvočísla trvala: %.4f sekund" % (perf_counter() - ref_generation))
+
+def generate_meresennes():
+    lm = True
+    print(3)
+    for prime_candidate in range (3, 1000000, 2):
+        if miller_rabin(prime_candidate, lm) and lucas_lehmer(prime_candidate):
+            print(2**prime_candidate-1)

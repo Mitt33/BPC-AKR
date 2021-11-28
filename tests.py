@@ -1,10 +1,12 @@
 import random
 import settings
+import math
 from time import perf_counter
 
 
-def miller_rabin(prime_candidate):
-    ref_testing = perf_counter()  # time reference for the testing of primality
+def miller_rabin(prime_candidate, lm):
+    if not lm:
+        ref_testing = perf_counter()  # time reference for the testing of primality
     # use the  2^s*r+1 formula
     r, s = 0, prime_candidate - 1
     k = 10  # Number of rounds to test the number, increase gives a higher success chance, decrease speeds up the script
@@ -21,23 +23,21 @@ def miller_rabin(prime_candidate):
             if x == prime_candidate - 1:
                 break  # prime
         else:
-            print("Testing composite number took:  %.4f seconds" % (perf_counter() - ref_testing))
+
             return False
-    print("Testing prime number took %.4f seconds" % (perf_counter() - ref_testing))
+    if not lm:
+        print("Testing prime number took %.4f seconds" % (perf_counter() - ref_testing))
     return True
 
 
-def lucas_lehmer(prime_candidate):
-    if prime_candidate == 2:
-        return True
+
+def lucas_lehmer(p):
     s = 4
-    M = pow(2, prime_candidate) - 1
-    for x in range(1, (prime_candidate - 2) + 1):
-        s = ((s * s) - 2) % M
-    if s == 0:
-        return True
-    else:
-        return False
+    m = 2 ** p - 1
+    for _ in range(p - 2):
+        s = ((s * s) - 2) % m
+    return s == 0
+
 
 
 def eratosthenes_sieve():
@@ -57,11 +57,33 @@ def eratosthenes_sieve():
     primelist[0] = False
     primelist[1] = False
     #  print out whatever remained marked as True
-    for tested_number in range(prime_candidate + 1):
-        if primelist[tested_number]:
-            print(tested_number)
+    return primelist
 
+
+"""def sieveOfAtkin():
+    prime_candidate = int(settings.prime)
+    primelist = [2, 3]
+    primelist = [False] * (prime_candidate + 1)
+    for x in range(1, int(math.sqrt(prime_candidate)) + 1):
+        for y in range(1, int(math.sqrt(prime_candidate)) + 1):
+            n = 4 * x ** 2 + y ** 2
+            if n <= prime_candidate and (n % 12 == 1 or n % 12 == 5): primelist[n] = not primelist[n]
+            n = 3 * x ** 2 + y ** 2
+            if n <= prime_candidate and n % 12 == 7: primelist[n] = not primelist[n]
+            n = 3 * x ** 2 - y ** 2
+            if x > y and n <= prime_candidate and n % 12 == 11: primelist[n] = not primelist[n]
+    for x in range(5, int(math.sqrt(prime_candidate))):
+        if primelist[x]:
+            for y in range(x ** 2, prime_candidate + 1, x ** 2):
+                primelist[y] = False
+    for prime_candidate in range(5, prime_candidate):
+        if primelist[prime_candidate]: primelist.append(prime_candidate)
+    return primelist
+"""
 
 def testnumber():
     number = int(input('Input number to be tested: '))
-    miller_rabin(number)
+    if miller_rabin(number) is True:
+        print("is prime")
+    else:
+        print("not prime")
