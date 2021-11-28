@@ -2,12 +2,18 @@ import re
 import settings
 from os import listdir
 from number_generators import miller_rabin
+from setup_logs import setup_logger
+
+save_to_file_logger = setup_logger('save_to_file', ".\logs\save_to_file.log")
+load_to_test_logger = setup_logger('load_to_test', ".\logs\load_to_test.log")
 
 def savetofile():
     fname = str(input('input a file name: '))
     f = open(fname + ".txt", "w")
     f.write(str(settings.prime))
     f.close()
+    save_to_file_logger.info("number: {a} saved, file: {b}".format(a=str(settings.prime), b=str(fname + ".txt")))
+
 
 def loadtotest():
     file_list = listdir()
@@ -18,3 +24,4 @@ def loadtotest():
     f = open(choose_file + ".txt", "r")
     numbertotest = int(f.read())
     miller_rabin(numbertotest)
+    load_to_test_logger.info("number: {a} loaded, from file: {b}".format(a=numbertotest, b=choose_file))

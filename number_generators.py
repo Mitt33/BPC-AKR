@@ -2,6 +2,10 @@ import random
 import settings
 from time import perf_counter
 from tests import miller_rabin, lucas_lehmer
+from setup_logs import setup_logger
+
+# first file logger
+generated_prime_logger = setup_logger('generated_prime', ".\logs\generated_prime.log")
 
 
 def generate_nbit_number(bit_length):
@@ -22,6 +26,7 @@ def generate_prime():
             settings.prime = prime_candidate
     print(f"Bylo otestováno {tested_numbers} čísel\nVygenerováno bylo prvočíslo {prime_candidate}")
     print("Generace prvočísla trvala: %.4f sekund" % (perf_counter() - ref_generation))
+    generated_prime_logger.info('time: {a}, bit-lenght: {b}, number_generated: {c}'.format(a= (perf_counter() - ref_generation),b= bit_length ,c=prime_candidate))
 
 def generate_meresennes():
     lm = True

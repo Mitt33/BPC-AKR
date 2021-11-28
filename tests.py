@@ -2,6 +2,9 @@ import random
 import settings
 import math
 from time import perf_counter
+from setup_logs import setup_logger
+
+tested_prime_logger = setup_logger('tested_prime', ".\logs\\tested_prime.log")
 
 
 def miller_rabin(prime_candidate, lm):
@@ -86,5 +89,7 @@ def testnumber():
     lm = False
     if miller_rabin(number,lm) is True:
         print("is prime")
+        tested_prime_logger.info("number: {a} is: prime".format(a=number))
     else:
         print("not prime")
+        tested_prime_logger.info("number: {a} is: composite".format(a=number))
