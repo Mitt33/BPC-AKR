@@ -26,11 +26,21 @@ def generate_prime():
             settings.prime = prime_candidate
     print(f"Bylo otestováno {tested_numbers} čísel\nVygenerováno bylo prvočíslo {prime_candidate}")
     print("Generace prvočísla trvala: %.4f sekund" % (perf_counter() - ref_generation))
-    generated_prime_logger.info('time: {a}, bit-lenght: {b}, number_generated: {c}'.format(a= (perf_counter() - ref_generation),b= bit_length ,c=prime_candidate))
+    generated_prime_logger.info(
+        'time: {a}, bit-lenght: {b}, number_generated: {c}'.format(a=(perf_counter() - ref_generation), b=bit_length,
+                                                                   c=prime_candidate))
+
 
 def generate_meresennes():
+    index = int(input("Počet mersennových prvočísel:"))
     lm = True
     print(3)
-    for prime_candidate in range (3, 1000000, 2):
+    counter = 0
+
+    for prime_candidate in range(3, 1000000, 2):
+        if index == counter:
+            break
+
         if miller_rabin(prime_candidate, lm) and lucas_lehmer(prime_candidate):
-            print(2**prime_candidate-1)
+            counter += 1
+            print(2 ** prime_candidate - 1)
