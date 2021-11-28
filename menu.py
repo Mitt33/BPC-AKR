@@ -3,7 +3,9 @@ from tests import testnumber, eratosthenes_sieve
 from number_generators import generate_prime, generate_meresennes
 import settings
 import os
+from setup_logs import setup_logger
 
+error_logger = setup_logger('errors', ".\logs\errors.log")
 
 menu = {
     1: 'Generate Prime Number',
@@ -48,6 +50,7 @@ def option5():
 def option6():
     quit()
 
+error_logger.error("An error occured")
 
 if __name__ == '__main__':
     settings.init()

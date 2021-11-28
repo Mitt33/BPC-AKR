@@ -4,15 +4,14 @@ from os import listdir
 from number_generators import miller_rabin
 from setup_logs import setup_logger
 
-save_to_file_logger = setup_logger('save_to_file', ".\logs\save_to_file.log")
-load_to_test_logger = setup_logger('load_to_test', ".\logs\load_to_test.log")
+file_operations_logger = setup_logger('file_operations', ".\logs\\file_operations.log")
 
 def savetofile():
     fname = str(input('input a file name: '))
     f = open(fname + ".txt", "w")
     f.write(str(settings.prime))
     f.close()
-    save_to_file_logger.info("number: {a} saved, file: {b}".format(a=str(settings.prime), b=str(fname + ".txt")))
+    file_operations_logger.info("number: {a} saved, file: {b}".format(a=str(settings.prime), b=str(fname + ".txt")))
 
 
 def loadtotest():
@@ -28,4 +27,4 @@ def loadtotest():
         print("The number is prime")
     else:
         print("The number is composite")
-    load_to_test_logger.info("number: {a} loaded, from file: {b}".format(a=numbertotest, b=choose_file))
+    file_operations_logger.info("number: {a} loaded, file: {b}".format(a=numbertotest, b=(choose_file + ".txt")))
