@@ -1,1 +1,1 @@
-#repository to save logs
+#folder to save logs
