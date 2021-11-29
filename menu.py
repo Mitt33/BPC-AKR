@@ -31,7 +31,12 @@ def option1():
         generate_meresennes()
 
 def option2():
-    print(eratosthenes_sieve())
+    option = int(input('1 -- Print all primes to number last generated \n2 -- Print primes to entered number: '))
+    if option == 1:
+        prime_candidate = int(settings.prime)
+    elif option == 2:
+        prime_candidate = int(input("Print primes to number: "))
+    print(eratosthenes_sieve(prime_candidate))
 
 
 
