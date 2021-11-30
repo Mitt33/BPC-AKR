@@ -23,21 +23,29 @@ def print_menu():
 
 
 def option1():
-    option = int(input('1 -- Generate n-bit prime \n2 -- Generate Mersennes primes: '))
+    option = int(input('1 -- Generate n-bit prime '
+                       '\n2 -- Generate Mersenne primes'
+                       '\nEnter your choice: '))
 
     if option == 1:
         generate_prime()
     elif option == 2:
         generate_meresennes()
 
+
 def option2():
-    option = int(input('1 -- Print all primes to number last generated \n2 -- Print primes to entered number: '))
+    option = int(input('1 -- Print all primes to number last generated '
+                       '\n2 -- Print primes to entered number'
+                       '\nEnter your choice: '))
     if option == 1:
-        prime_candidate = int(settings.prime)
+        try:
+            prime_candidate = int(settings.prime)
+            eratosthenes_sieve(prime_candidate)
+        except TypeError:
+            print("No Prime has been generated yet")
     elif option == 2:
         prime_candidate = int(input("Print primes to number: "))
-    print(eratosthenes_sieve(prime_candidate))
-
+        eratosthenes_sieve(prime_candidate)
 
 
 def option3():
@@ -55,6 +63,7 @@ def option5():
 def option6():
     quit()
 
+
 error_logger.error("An error occured")
 
 if __name__ == '__main__':
@@ -64,7 +73,7 @@ if __name__ == '__main__':
         option = ''
         try:
             option = int(input('Enter your choice: '))
-        except:
+        except ValueError:
             print('Wrong input. Try again')
         if option == 1:
             option1()
